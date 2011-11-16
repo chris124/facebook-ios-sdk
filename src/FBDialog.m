@@ -33,7 +33,7 @@ static BOOL FBIsDeviceIPad();
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-BOOL FBIsDeviceIPad() {
+static BOOL FBIsDeviceIPad() {
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 30200
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
         return YES;
@@ -131,14 +131,14 @@ params   = _params;
     CGColorSpaceRelease(space);
 }
 
-- (BOOL)shouldRotateToOrientation:(UIDeviceOrientation)orientation {
+- (BOOL)shouldRotateToOrientation:(UIInterfaceOrientation)orientation {
     if (orientation == _orientation) {
         return NO;
     } else {
-        return orientation == UIDeviceOrientationLandscapeLeft
-        || orientation == UIDeviceOrientationLandscapeRight
-        || orientation == UIDeviceOrientationPortrait
-        || orientation == UIDeviceOrientationPortraitUpsideDown;
+        return orientation == UIInterfaceOrientationPortrait
+        || orientation == UIInterfaceOrientationPortraitUpsideDown
+        || orientation == UIInterfaceOrientationLandscapeLeft
+        || orientation == UIInterfaceOrientationLandscapeRight;
     }
 }
 
@@ -289,10 +289,9 @@ params   = _params;
 // NSObject
 
 - (id)init {
-    if (self = [super initWithFrame:CGRectZero]) {
+    if ((self = [super initWithFrame:CGRectZero])) {
         _delegate = nil;
         _loadingURL = nil;
-        _orientation = UIDeviceOrientationUnknown;
         _showingKeyboard = NO;
         
         self.backgroundColor = [UIColor clearColor];
@@ -421,7 +420,7 @@ params   = _params;
 // UIDeviceOrientationDidChangeNotification
 
 - (void)deviceOrientationDidChange:(void*)object {
-    UIDeviceOrientation orientation = (UIDeviceOrientation)[UIApplication sharedApplication].statusBarOrientation;
+    UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
     if (!_showingKeyboard && [self shouldRotateToOrientation:orientation]) {
         [self updateWebOrientation];
         
